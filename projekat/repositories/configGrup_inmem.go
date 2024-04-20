@@ -42,3 +42,30 @@ func (repo *ConfigGrupInMemRepository) DeleteConfigGrup(name string, version str
 	return fmt.Errorf("Configuration not found")
 
 }
+
+func (repo *ConfigGrupInMemRepository) AddConfigToGroup(groupName string, version string, config model.Configuration) error {
+	key := groupName + ":" + version
+	group, ok := repo.groups[key]
+	if !ok {
+		return fmt.Errorf("Configuration Group not found")
+	}
+	group.Configs = append(group.Configs, config)
+	repo.groups[key] = group
+	return nil
+}
+func (repo *ConfigGrupInMemRepository) RemoveConfigFromGroup(groupName string, version string, configName string, configVersion string) error {
+	key := groupName + ":" + version
+	group, ok := repo.groups[key]
+	if !ok {
+		return fmt.Errorf("Configuration Group not found")
+	}
+	var updatedConfigs []model.Configuration
+	for _, config := range group.Configs {
+		if config.Name != configName && config.Version != configVersion {
+			updatedConfigs = append(updatedConfigs, config)
+		}
+	}
+	group.Configs = updatedConfigs
+	repo.groups[key] = group
+	return nil
+}
