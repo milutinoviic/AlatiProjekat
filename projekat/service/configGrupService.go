@@ -21,10 +21,10 @@ func (s ConfigurationGrupService) AddConfigGrup(group model.ConfigurationGroup) 
 	return s.repo.AddConfigGrup(group)
 }
 
-func (s ConfigurationGrupService) GetConfigGrup(id string) (model.ConfigurationGroup, error) {
-	return s.repo.GetConfigGrupe(id)
+func (s ConfigurationGrupService) GetConfigGrup(name string, version string) (model.ConfigurationGroup, error) {
+	return s.repo.GetConfigGrupe(name, version)
 }
 
-func (s ConfigurationGrupService) DeleteConfigGrup(id string) error {
-	return s.repo.DeleteConfigGrup(id)
+func (s ConfigurationGrupService) DeleteConfigGrup(name string, version string) error {
+	return s.repo.DeleteConfigGrup(name, version)
 }

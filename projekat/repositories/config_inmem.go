@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"errors"
 	"fmt"
 
 	"projekat/model"
@@ -19,29 +18,27 @@ func NewConfigInMemRepository() model.ConfigurationRepository {
 	}
 }
 func (repo *ConfigInMemRepository) AddConfig(config model.Configuration) error {
-	repo.configs[config.Id] = config
+	key := config.Name + ":" + config.Version
+	repo.configs[key] = config
 	return nil
 
 }
 
-func (repo *ConfigInMemRepository) GetConfig(id string) (model.Configuration, error) {
-	config, exsist := repo.configs[id]
+func (repo *ConfigInMemRepository) GetConfig(name string, version string) (model.Configuration, error) {
 
-	if !exsist {
-		return model.Configuration{}, fmt.Errorf("Konfiguracija sa ID-om nije pronadjena", id)
-
+	key := name + ":" + version
+	config, ok := repo.configs[key]
+	if !ok {
+		return model.Configuration{}, fmt.Errorf("Configuration not found")
 	}
-
 	return config, nil
 
 }
-func (repo *ConfigInMemRepository) DeleteConfig(id string) error {
-	_, exists := repo.configs[id]
-	if !exists {
-		return errors.New("Not found config")
+func (repo *ConfigInMemRepository) DeleteConfig(name string, version string) error {
+	key := name + ":" + version
+	if _, ok := repo.configs[key]; ok {
+		delete(repo.configs, key)
+		return nil
 	}
-
-	delete(repo.configs, id)
-
-	return nil
+	return fmt.Errorf("Configuration not found")
 }

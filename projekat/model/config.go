@@ -1,7 +1,6 @@
 package model
 
 type Configuration struct {
-	Id      string
 	Name    string
 	Version string
 	Params  map[string]string
@@ -10,6 +9,6 @@ type Configuration struct {
 type ConfigurationRepository interface {
 	// todo: dodati metodE
 	AddConfig(config Configuration) error
-	GetConfig(id string) (Configuration, error)
-	DeleteConfig(id string) error
+	GetConfig(name string, version string) (Configuration, error)
+	DeleteConfig(name string, value string) error
 }

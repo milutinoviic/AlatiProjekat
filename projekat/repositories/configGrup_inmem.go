@@ -1,8 +1,7 @@
 package repositories
 
 import (
-	"errors"
-
+	"fmt"
 	"projekat/model"
 )
 
@@ -17,30 +16,29 @@ func NewConfigGrupInMemRepository() model.ConfigurationGroupRepository {
 	}
 }
 
-func (repo *ConfigGrupInMemRepository) GetConfigGrupe(id string) (model.ConfigurationGroup, error) {
-	grupConfig, ok := repo.groups[id]
-
+func (repo *ConfigGrupInMemRepository) GetConfigGrupe(name string, version string) (model.ConfigurationGroup, error) {
+	key := name + ":" + version
+	configGrup, ok := repo.groups[key]
 	if !ok {
-		return model.ConfigurationGroup{}, errors.New("Not found ConfigGrup")
-
+		return model.ConfigurationGroup{}, fmt.Errorf("Configuration Grup not found")
 	}
+	return configGrup, nil
 
-	return grupConfig, nil
 }
 
 func (repo *ConfigGrupInMemRepository) AddConfigGrup(groupConfig model.ConfigurationGroup) error {
-	repo.groups[groupConfig.Id] = groupConfig
+	key := groupConfig.Name + ":" + groupConfig.Version
+	repo.groups[key] = groupConfig
 	return nil
+
 }
 
-func (repo *ConfigGrupInMemRepository) DeleteConfigGrup(id string) error {
-	_, exist := repo.groups[id]
-	if !exist {
-		return errors.New("Not found group")
+func (repo *ConfigGrupInMemRepository) DeleteConfigGrup(name string, version string) error {
+	key := name + ":" + version
+	if _, ok := repo.groups[key]; ok {
+		delete(repo.groups, key)
+		return nil
 	}
-
-	delete(repo.groups, id)
-
-	return nil
+	return fmt.Errorf("Configuration not found")
 
 }
