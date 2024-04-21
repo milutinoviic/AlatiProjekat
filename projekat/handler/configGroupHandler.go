@@ -57,3 +57,20 @@ func (c ConfigGroupHandler) AddGroup(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	fmt.Fprintln(w, "Configuration successfully added")
 }
+
+func (c ConfigGroupHandler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
+
+	name := mux.Vars(r)["name"]
+	version := mux.Vars(r)["version"]
+
+	err := c.service.DeleteConfigGrup(name, version)
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Configuration successfully deleted")
+
+}

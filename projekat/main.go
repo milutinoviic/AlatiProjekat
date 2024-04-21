@@ -13,8 +13,10 @@ import (
 )
 
 func main() {
+
 	repo := repositories.NewConfigInMemRepository()
-	service := service.NewConfigService(repo)
+	service1 := service.NewConfigService(repo)
+
 	params := make(map[string]string)
 	params["username"] = "pera"
 	params["port"] = "5432"
@@ -23,15 +25,26 @@ func main() {
 		Version: "2",
 		Params:  params,
 	}
-	service.AddConfig(config)
-	handler := handler.NewConfigHandler(service)
+
+	service1.AddConfig(config)
+
+	handler1 := handler.NewConfigHandler(service1)
+
+	repoGrup := repositories.NewConfigGrupInMemRepository()
+
+	serviceGrup := service.NewConfigGrupService(repoGrup)
+
+	handlerGrup := handler.NewConfigGroupHandler(serviceGrup)
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/configs/{name}/{version}", handler.Get).Methods("GET")
-	router.HandleFunc("/configs", handler.Add).Methods("POST")
-	router.HandleFunc("/configs/{name}/{version}", handler.Delete).Methods("DELETE")
+	router.HandleFunc("/configs/{name}/{version}", handler1.Get).Methods("GET")
+	router.HandleFunc("/configs", handler1.Add).Methods("POST")
+	router.HandleFunc("/configs/{name}/{version}", handler1.Delete).Methods("DELETE")
+
+	router.HandleFunc("/configgroups/{name}/{version}", handlerGrup.GetGroup).Methods("GET")
+	router.HandleFunc("/configgroups", handlerGrup.AddGroup).Methods("POST")
+	router.HandleFunc("/configgroups/{name}/{version}", handlerGrup.DeleteGroup).Methods("DELETE")
 
 	http.ListenAndServe("0.0.0.0:8000", router)
-
 }
