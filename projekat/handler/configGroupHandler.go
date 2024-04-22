@@ -74,3 +74,42 @@ func (c ConfigGroupHandler) DeleteGroup(w http.ResponseWriter, r *http.Request) 
 	fmt.Fprintln(w, "Configuration successfully deleted")
 
 }
+
+func (c ConfigGroupHandler) AddConfigToGroup(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	groupName := vars["grupName"]
+	version := vars["grupVersion"]
+
+	var newConfig model.Configuration
+	err := json.NewDecoder(r.Body).Decode(&newConfig)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = c.service.AddConfigToGroup(groupName, version, newConfig)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	fmt.Fprintln(w, "Configuration added to group successfully")
+}
+
+func (c ConfigGroupHandler) RemoveConfigFromGroup(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	groupName := vars["name"]
+	version := vars["version"]
+	configName := vars["configName"]
+	configVersion := vars["configVersion"]
+
+	err := c.service.RemoveConfigFromGroup(groupName, version, configName, configVersion)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, "Configuration removed from group successfully")
+}

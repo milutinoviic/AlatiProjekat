@@ -19,9 +19,12 @@ func NewConfigInMemRepository() model.ConfigurationRepository {
 }
 func (repo *ConfigInMemRepository) AddConfig(config model.Configuration) error {
 	key := config.Name + ":" + config.Version
+	if _, ok := repo.configs[key]; ok {
+		return fmt.Errorf("Configuration with the same name and version already exists")
+	}
+
 	repo.configs[key] = config
 	return nil
-
 }
 
 func (repo *ConfigInMemRepository) GetConfig(name string, version string) (model.Configuration, error) {
