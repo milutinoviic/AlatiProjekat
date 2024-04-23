@@ -23,6 +23,7 @@ func NewConfigHandler(service service.ConfigurationService) ConfigHandler {
 // GET /configs/{name}/{version}
 // GET /configs/{name}/{version}
 func (c ConfigHandler) Get(w http.ResponseWriter, r *http.Request) {
+	//time.Sleep(10 * time.Second)
 	name := mux.Vars(r)["name"]
 	version := mux.Vars(r)["version"]
 

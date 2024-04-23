@@ -53,25 +53,25 @@ func (repo *ConfigGrupInMemRepository) AddConfigToGroup(groupName string, versio
 	if !ok {
 		return fmt.Errorf("Configuration Group not found")
 	}
-	// Provjeri postoji li već konfiguracija s istim imenom i vrijednostima unutar grupe
+
 	for _, existingConfig := range group.Configs {
 		if existingConfig.Name == config.Name && existingConfig.Version == config.Version {
 			return fmt.Errorf("Configuration with the same name and values already exists in the group")
 		}
 	}
-	// Dodaj konfiguraciju u grupu
+
 	group.Configs = append(group.Configs, config)
 	repo.groups[key] = group
 	return nil
 }
 func (repo *ConfigGrupInMemRepository) RemoveConfigFromGroup(groupName string, version string, configName string, configVersion string) error {
 	key := groupName + ":" + version
-	// Provjeri postoji li grupa s odgovarajućim imenom i verzijom
+
 	group, ok := repo.groups[key]
 	if !ok {
 		return fmt.Errorf("Configuration Group not found")
 	}
-	// Provjeri postoji li konfiguracija koja se želi ukloniti unutar grupe
+
 	var found bool
 	var updatedConfigs []model.Configuration
 	for _, config := range group.Configs {
@@ -81,11 +81,11 @@ func (repo *ConfigGrupInMemRepository) RemoveConfigFromGroup(groupName string, v
 			updatedConfigs = append(updatedConfigs, config)
 		}
 	}
-	// Ako konfiguracija nije pronađena unutar grupe, vrati grešku
+
 	if !found {
 		return fmt.Errorf("Configuration not found in the group")
 	}
-	// Ako je konfiguracija pronađena, ažuriraj grupu bez te konfiguracije
+
 	group.Configs = updatedConfigs
 	repo.groups[key] = group
 	return nil
